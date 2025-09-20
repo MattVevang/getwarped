@@ -23,6 +23,7 @@
 4. Task ordering: Setup → Tests → Models → Services → UI → Integration → Polish
 5. Parallel marking: Different files = [P], same files = sequential
 6. Production-ready focus: Real implementations, no placeholders
+7. When possible include descriptive code comments explaining that function or section if supported in the file type (json == no comment support for example)
 ```
 
 ## Format: `[ID] [P?] Description`
