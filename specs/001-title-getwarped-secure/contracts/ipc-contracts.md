@@ -7,6 +7,7 @@
 ## Service Management Contracts
 
 ### CreateService
+
 **Direction**: Renderer → Main  
 **Channel**: `service:create`
 
@@ -29,6 +30,7 @@ interface CreateServiceResponse {
 ```
 
 ### UpdateService
+
 **Direction**: Renderer → Main  
 **Channel**: `service:update`
 
@@ -45,6 +47,7 @@ interface UpdateServiceResponse {
 ```
 
 ### DeleteService
+
 **Direction**: Renderer → Main  
 **Channel**: `service:delete`
 
@@ -60,6 +63,7 @@ interface DeleteServiceResponse {
 ```
 
 ### GetServices
+
 **Direction**: Renderer → Main  
 **Channel**: `service:list`
 
@@ -76,6 +80,7 @@ interface GetServicesResponse {
 ```
 
 ### ReorderServices
+
 **Direction**: Renderer → Main  
 **Channel**: `service:reorder`
 
@@ -94,6 +99,7 @@ interface ReorderServicesResponse {
 ## Workspace Management Contracts
 
 ### CreateWorkspace
+
 **Direction**: Renderer → Main  
 **Channel**: `workspace:create`
 
@@ -112,6 +118,7 @@ interface CreateWorkspaceResponse {
 ```
 
 ### UpdateWorkspace
+
 **Direction**: Renderer → Main  
 **Channel**: `workspace:update`
 
@@ -128,6 +135,7 @@ interface UpdateWorkspaceResponse {
 ```
 
 ### DeleteWorkspace
+
 **Direction**: Renderer → Main  
 **Channel**: `workspace:delete`
 
@@ -144,6 +152,7 @@ interface DeleteWorkspaceResponse {
 ```
 
 ### GetWorkspaces
+
 **Direction**: Renderer → Main  
 **Channel**: `workspace:list`
 
@@ -160,6 +169,7 @@ interface GetWorkspacesResponse {
 ```
 
 ### SetActiveWorkspace
+
 **Direction**: Renderer → Main  
 **Channel**: `workspace:activate`
 
@@ -177,6 +187,7 @@ interface SetActiveWorkspaceResponse {
 ## Session Management Contracts
 
 ### SaveSession
+
 **Direction**: Main → Main (internal)  
 **Channel**: Internal only - uses keytar directly
 
@@ -184,7 +195,7 @@ interface SetActiveWorkspaceResponse {
 interface SaveSessionData {
   serviceId: string;
   sessionData: {
-    cookies: string;      // Serialized cookies
+    cookies: string; // Serialized cookies
     localStorage: string; // JSON string of localStorage
     sessionStorage: string; // JSON string of sessionStorage
   };
@@ -192,6 +203,7 @@ interface SaveSessionData {
 ```
 
 ### LoadSession
+
 **Direction**: Main → Main (internal)  
 **Channel**: Internal only - uses keytar directly
 
@@ -207,6 +219,7 @@ interface LoadSessionData {
 ```
 
 ### ClearSession
+
 **Direction**: Renderer → Main  
 **Channel**: `session:clear`
 
@@ -222,6 +235,7 @@ interface ClearSessionResponse {
 ```
 
 ### ClearAllSessions
+
 **Direction**: Renderer → Main  
 **Channel**: `session:clear-all`
 
@@ -240,6 +254,7 @@ interface ClearAllSessionsResponse {
 ## BrowserView Management Contracts
 
 ### CreateBrowserView
+
 **Direction**: Renderer → Main  
 **Channel**: `browserview:create`
 
@@ -261,6 +276,7 @@ interface CreateBrowserViewResponse {
 ```
 
 ### NavigateService
+
 **Direction**: Renderer → Main  
 **Channel**: `browserview:navigate`
 
@@ -277,6 +293,7 @@ interface NavigateServiceResponse {
 ```
 
 ### ResizeBrowserView
+
 **Direction**: Renderer → Main  
 **Channel**: `browserview:resize`
 
@@ -298,6 +315,7 @@ interface ResizeBrowserViewResponse {
 ```
 
 ### DestroyBrowserView
+
 **Direction**: Renderer → Main  
 **Channel**: `browserview:destroy`
 
@@ -315,6 +333,7 @@ interface DestroyBrowserViewResponse {
 ## Export/Import Contracts
 
 ### ExportConfiguration
+
 **Direction**: Renderer → Main  
 **Channel**: `config:export`
 
@@ -333,6 +352,7 @@ interface ExportConfigurationResponse {
 ```
 
 ### ImportConfiguration
+
 **Direction**: Renderer → Main  
 **Channel**: `config:import`
 
@@ -357,6 +377,7 @@ interface ImportConfigurationResponse {
 ```
 
 ### ValidateImport
+
 **Direction**: Renderer → Main  
 **Channel**: `config:validate`
 
@@ -376,6 +397,7 @@ interface ValidateImportResponse {
 ## Settings Management Contracts
 
 ### GetSettings
+
 **Direction**: Renderer → Main  
 **Channel**: `settings:get`
 
@@ -392,6 +414,7 @@ interface GetSettingsResponse {
 ```
 
 ### UpdateSettings
+
 **Direction**: Renderer → Main  
 **Channel**: `settings:update`
 
@@ -410,6 +433,7 @@ interface UpdateSettingsResponse {
 ## Event Notifications (Main → Renderer)
 
 ### ServiceStateChanged
+
 **Direction**: Main → Renderer  
 **Channel**: `service:state-changed`
 
@@ -423,6 +447,7 @@ interface ServiceStateChangedEvent {
 ```
 
 ### WorkspaceChanged
+
 **Direction**: Main → Renderer  
 **Channel**: `workspace:changed`
 
@@ -435,6 +460,7 @@ interface WorkspaceChangedEvent {
 ```
 
 ### SessionExpired
+
 **Direction**: Main → Renderer  
 **Channel**: `session:expired`
 
@@ -447,6 +473,7 @@ interface SessionExpiredEvent {
 ```
 
 ### NotificationReceived
+
 **Direction**: Main → Renderer  
 **Channel**: `notification:received`
 
@@ -464,18 +491,20 @@ interface NotificationReceivedEvent {
 ## Error Handling Contracts
 
 ### Error Response Format
+
 All IPC responses include standardized error information:
 
 ```typescript
 interface StandardError {
-  code: string;           // Error code (e.g., 'SERVICE_NOT_FOUND')
-  message: string;        // Human-readable error message
-  details?: any;          // Additional error context
-  timestamp: Date;        // Error occurrence time
+  code: string; // Error code (e.g., 'SERVICE_NOT_FOUND')
+  message: string; // Human-readable error message
+  details?: any; // Additional error context
+  timestamp: Date; // Error occurrence time
 }
 ```
 
 ### Common Error Codes
+
 - `INVALID_REQUEST`: Malformed request data
 - `SERVICE_NOT_FOUND`: Service ID does not exist
 - `WORKSPACE_NOT_FOUND`: Workspace ID does not exist
@@ -488,7 +517,9 @@ interface StandardError {
 ## Security Validation
 
 ### Input Validation
+
 All IPC handlers validate:
+
 - Required fields presence
 - Data type correctness
 - String length limits
@@ -497,6 +528,7 @@ All IPC handlers validate:
 - File path safety checks
 
 ### Authorization
+
 - Service operations validate service ownership
 - Workspace operations validate workspace access
 - Session operations validate service association
@@ -518,6 +550,7 @@ interface ValidationError {
 ## IPC Channel Registry
 
 ### Bidirectional Channels
+
 - `service:*` - Service management operations
 - `workspace:*` - Workspace management operations
 - `browserview:*` - BrowserView management operations
@@ -526,15 +559,19 @@ interface ValidationError {
 - `session:*` - Session management operations
 
 ### Event-Only Channels (Main → Renderer)
+
 - `service:state-changed` - Service state notifications
 - `workspace:changed` - Workspace change notifications
 - `session:expired` - Session expiration notifications
 - `notification:received` - Service notifications
 
 ### Internal Channels (Main only)
+
 - Credential storage operations (keytar)
 - File system operations (electron-store)
 - BrowserView lifecycle management
 
 ---
-*All contracts support type-safe communication with comprehensive error handling*
+
+_All contracts support type-safe communication with comprehensive error
+handling_

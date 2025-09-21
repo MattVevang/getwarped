@@ -10,6 +10,7 @@
 ## Architecture Context
 
 ### Core Technologies
+
 - **Framework**: Electron 27+ with main/renderer process architecture
 - **UI**: React 18+ with TypeScript 5.0+ and Ant Design components
 - **State**: Redux Toolkit for centralized state management
@@ -18,6 +19,7 @@
 - **Build**: Webpack + electron-builder for cross-platform packaging
 
 ### Key Principles
+
 1. **Library-First**: Prioritize mature, well-maintained open-source libraries
 2. **Security-First**: Complete session isolation, zero credential exports
 3. **Production-Ready**: Comprehensive error handling, logging, and testing
@@ -26,15 +28,16 @@
 ## Code Generation Guidelines
 
 ### TypeScript Patterns
+
 ```typescript
 // Always use strict typing for interfaces
 interface ServiceConfiguration {
-  id: string;                    // Use UUID for unique identifiers
-  name: string;                  // Required fields first
+  id: string; // Use UUID for unique identifiers
+  name: string; // Required fields first
   url: string;
   workspaceId: string;
-  icon?: string;                 // Optional fields with ? suffix
-  createdAt: Date;              // Use native JS types
+  icon?: string; // Optional fields with ? suffix
+  createdAt: Date; // Use native JS types
   updatedAt: Date;
 }
 
@@ -46,12 +49,13 @@ type WorkspaceId = string & { __brand: 'WorkspaceId' };
 const ServiceCategory = {
   EMAIL: 'email',
   PRODUCTIVITY: 'productivity',
-  COMMUNICATION: 'communication'
+  COMMUNICATION: 'communication',
 } as const;
-type ServiceCategory = typeof ServiceCategory[keyof typeof ServiceCategory];
+type ServiceCategory = (typeof ServiceCategory)[keyof typeof ServiceCategory];
 ```
 
 ### React Component Patterns
+
 ```typescript
 // Use functional components with proper props typing
 interface ServiceCardProps {
@@ -61,11 +65,11 @@ interface ServiceCardProps {
   onUpdate: (updates: Partial<ServiceConfiguration>) => void;
 }
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ 
-  service, 
-  isActive, 
-  onSelect, 
-  onUpdate 
+const ServiceCard: React.FC<ServiceCardProps> = ({
+  service,
+  isActive,
+  onSelect,
+  onUpdate
 }) => {
   // Use callbacks for performance
   const handleSelect = useCallback(() => {
@@ -78,7 +82,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   }
 
   return (
-    <Card 
+    <Card
       className={`service-card ${isActive ? 'active' : ''}`}
       onClick={handleSelect}
     >
@@ -89,6 +93,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 ```
 
 ### Redux Toolkit Patterns
+
 ```typescript
 // Use createSlice for reducers
 const servicesSlice = createSlice({
@@ -97,25 +102,28 @@ const servicesSlice = createSlice({
     items: {} as Record<string, ServiceConfiguration>,
     activeServiceId: null as string | null,
     loading: false,
-    error: null as string | null
+    error: null as string | null,
   },
   reducers: {
     addService: (state, action: PayloadAction<ServiceConfiguration>) => {
       state.items[action.payload.id] = action.payload;
     },
-    updateService: (state, action: PayloadAction<{
-      id: string;
-      updates: Partial<ServiceConfiguration>;
-    }>) => {
+    updateService: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        updates: Partial<ServiceConfiguration>;
+      }>
+    ) => {
       const service = state.items[action.payload.id];
       if (service) {
         Object.assign(service, action.payload.updates);
       }
-    }
+    },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      .addCase(createService.pending, (state) => {
+      .addCase(createService.pending, state => {
         state.loading = true;
         state.error = null;
       })
@@ -127,7 +135,7 @@ const servicesSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Failed to create service';
       });
-  }
+  },
 });
 
 // Use createAsyncThunk for async operations
@@ -148,31 +156,37 @@ export const createService = createAsyncThunk(
 ```
 
 ### Electron IPC Patterns
+
 ```typescript
 // Main process IPC handlers
-ipcMain.handle('service:create', async (event, request: CreateServiceRequest) => {
-  try {
-    // Validate input
-    const validation = validateCreateServiceRequest(request);
-    if (!validation.valid) {
-      return { success: false, error: validation.error };
-    }
+ipcMain.handle(
+  'service:create',
+  async (event, request: CreateServiceRequest) => {
+    try {
+      // Validate input
+      const validation = validateCreateServiceRequest(request);
+      if (!validation.valid) {
+        return { success: false, error: validation.error };
+      }
 
-    // Create service
-    const service = await serviceManager.createService(request);
-    
-    // Save to store
-    await configStore.set(`services.${service.id}`, service);
-    
-    return { success: true, serviceId: service.id, service };
-  } catch (error) {
-    logger.error('Failed to create service:', error);
-    return { success: false, error: error.message };
+      // Create service
+      const service = await serviceManager.createService(request);
+
+      // Save to store
+      await configStore.set(`services.${service.id}`, service);
+
+      return { success: true, serviceId: service.id, service };
+    } catch (error) {
+      logger.error('Failed to create service:', error);
+      return { success: false, error: error.message };
+    }
   }
-});
+);
 
 // Renderer process IPC calls
-const createService = async (request: CreateServiceRequest): Promise<ServiceConfiguration> => {
+const createService = async (
+  request: CreateServiceRequest
+): Promise<ServiceConfiguration> => {
   const response = await ipcRenderer.invoke('service:create', request);
   if (!response.success) {
     throw new Error(response.error);
@@ -182,21 +196,24 @@ const createService = async (request: CreateServiceRequest): Promise<ServiceConf
 ```
 
 ### Error Handling Patterns
+
 ```typescript
 // Use Result pattern for operations that can fail
-type Result<T, E = Error> = 
+type Result<T, E = Error> =
   | { success: true; data: T }
   | { success: false; error: E };
 
 // Service layer error handling
 class ServiceManager {
-  async createService(request: CreateServiceRequest): Promise<Result<ServiceConfiguration>> {
+  async createService(
+    request: CreateServiceRequest
+  ): Promise<Result<ServiceConfiguration>> {
     try {
       // Validate request
       if (!request.name || !request.url || !request.workspaceId) {
-        return { 
-          success: false, 
-          error: new ValidationError('Missing required fields') 
+        return {
+          success: false,
+          error: new ValidationError('Missing required fields'),
         };
       }
 
@@ -207,7 +224,7 @@ class ServiceManager {
         url: request.url,
         workspaceId: request.workspaceId,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       return { success: true, data: service };
@@ -220,6 +237,7 @@ class ServiceManager {
 ```
 
 ### Testing Patterns
+
 ```typescript
 // Jest unit tests
 describe('ServiceManager', () => {
@@ -234,7 +252,7 @@ describe('ServiceManager', () => {
       const request: CreateServiceRequest = {
         name: 'Test Service',
         url: 'https://example.com',
-        workspaceId: 'workspace-1'
+        workspaceId: 'workspace-1',
       };
 
       const result = await serviceManager.createService(request);
@@ -277,25 +295,30 @@ test('should create and display new service', async ({ page }) => {
   await page.click('[data-testid="save-service-btn"]');
 
   // Verify service appears
-  await expect(page.locator('[data-testid="service-card"]')).toContainText('Gmail');
+  await expect(page.locator('[data-testid="service-card"]')).toContainText(
+    'Gmail'
+  );
 });
 ```
 
 ## Security Guidelines
 
 ### Credential Storage
+
 - **NEVER** store credentials in application files, configuration, or exports
 - **ALWAYS** use keytar for OS-native credential storage
 - **VALIDATE** all credential operations with proper error handling
 - **ENCRYPT** session data before storing in keytar
 
 ### Session Isolation
+
 - **USE** Electron's BrowserView API for complete isolation
 - **AVOID** shared cookies, localStorage, or session data
 - **IMPLEMENT** independent navigation and resource loading
 - **VALIDATE** all cross-process communication
 
 ### Input Validation
+
 - **SANITIZE** all user inputs, especially URLs and names
 - **VALIDATE** JSON schema for import/export operations
 - **ESCAPE** HTML content to prevent XSS attacks
@@ -304,18 +327,21 @@ test('should create and display new service', async ({ page }) => {
 ## Performance Guidelines
 
 ### Memory Management
+
 - **DISPOSE** of unused BrowserView instances
 - **LIMIT** active services to prevent memory leaks
 - **IMPLEMENT** lazy loading for service templates
 - **MONITOR** memory usage and implement optimization
 
 ### UI Performance
+
 - **USE** React.memo for expensive components
 - **IMPLEMENT** virtualization for large service lists
 - **DEBOUNCE** search and filter operations
 - **OPTIMIZE** Redux selectors with reselect
 
 ### Electron Optimization
+
 - **PRELOAD** scripts for IPC communication
 - **OPTIMIZE** main process with worker threads
 - **IMPLEMENT** lazy module loading
@@ -324,6 +350,7 @@ test('should create and display new service', async ({ page }) => {
 ## Development Workflow
 
 ### File Organization
+
 ```
 src/
 ├── main/                   # Main process code
@@ -348,6 +375,7 @@ src/
 ```
 
 ### Code Review Checklist
+
 - [ ] TypeScript types are properly defined
 - [ ] Error handling follows Result pattern
 - [ ] Security best practices are followed
@@ -359,6 +387,7 @@ src/
 ## Common Patterns to Avoid
 
 ### Anti-Patterns
+
 - **DON'T** use `any` type - prefer `unknown` or proper typing
 - **DON'T** store sensitive data in Redux state
 - **DON'T** use synchronous IPC calls - prefer async
@@ -366,6 +395,7 @@ src/
 - **DON'T** ignore TypeScript errors - fix them properly
 
 ### Security Anti-Patterns
+
 - **NEVER** store credentials in plain text
 - **NEVER** trust user input without validation
 - **NEVER** expose internal APIs to renderer process
@@ -373,4 +403,6 @@ src/
 - **NEVER** include credentials in logs or exports
 
 ---
-*Follow these guidelines to maintain code quality, security, and performance standards*
+
+_Follow these guidelines to maintain code quality, security, and performance
+standards_

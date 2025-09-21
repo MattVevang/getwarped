@@ -7,12 +7,13 @@
 ## Service Templates API
 
 ### GetTemplates
+
 **Purpose**: Retrieve available service templates for quick service setup
 
 ```typescript
 interface GetTemplatesRequest {
   category?: ServiceCategory; // Optional filter by category
-  search?: string;           // Optional name/description search
+  search?: string; // Optional name/description search
 }
 
 interface GetTemplatesResponse {
@@ -24,16 +25,17 @@ interface GetTemplatesResponse {
 ```
 
 ### CreateServiceFromTemplate
+
 **Purpose**: Create a new service using a predefined template
 
 ```typescript
 interface CreateServiceFromTemplateRequest {
-  templateId: string;        // Template identifier
-  workspaceId: string;       // Target workspace
+  templateId: string; // Template identifier
+  workspaceId: string; // Target workspace
   customizations?: {
-    name?: string;           // Override template name
-    url?: string;            // Override template URL
-    theme?: ServiceTheme;    // Override template theme
+    name?: string; // Override template name
+    url?: string; // Override template URL
+    theme?: ServiceTheme; // Override template theme
   };
 }
 
@@ -46,6 +48,7 @@ interface CreateServiceFromTemplateResponse {
 ```
 
 ### UpdateTemplate
+
 **Purpose**: Update built-in service template (admin operation)
 
 ```typescript
@@ -63,48 +66,51 @@ interface UpdateTemplateResponse {
 ## Service Icon Management API
 
 ### UploadServiceIcon
+
 **Purpose**: Upload and process custom service icon
 
 ```typescript
 interface UploadServiceIconRequest {
   serviceId: string;
-  iconData: string;          // Base64 encoded image data
+  iconData: string; // Base64 encoded image data
   format: 'png' | 'jpg' | 'svg' | 'ico';
 }
 
 interface UploadServiceIconResponse {
   success: boolean;
-  iconUrl?: string;          // Processed icon URL
-  iconHash?: string;         // Icon content hash
+  iconUrl?: string; // Processed icon URL
+  iconHash?: string; // Icon content hash
   error?: string;
 }
 ```
 
 ### GetServiceIcon
+
 **Purpose**: Retrieve service icon with caching
 
 ```typescript
 interface GetServiceIconRequest {
   serviceId: string;
-  size?: number;             // Requested icon size (pixels)
-  format?: 'png' | 'jpg';    // Requested format
+  size?: number; // Requested icon size (pixels)
+  format?: 'png' | 'jpg'; // Requested format
 }
 
 interface GetServiceIconResponse {
   success: boolean;
-  iconData?: string;         // Base64 encoded icon
-  contentType?: string;      // MIME type
-  cached: boolean;           // Whether served from cache
+  iconData?: string; // Base64 encoded icon
+  contentType?: string; // MIME type
+  cached: boolean; // Whether served from cache
   error?: string;
 }
 ```
 
 ### ClearIconCache
+
 **Purpose**: Clear cached service icons
 
 ```typescript
 interface ClearIconCacheRequest {
-  serviceId?: string;        // Optional specific service
+  serviceId?: string; // Optional specific service
 }
 
 interface ClearIconCacheResponse {
@@ -117,6 +123,7 @@ interface ClearIconCacheResponse {
 ## Service State Management API
 
 ### GetServiceState
+
 **Purpose**: Retrieve current service runtime state
 
 ```typescript
@@ -126,14 +133,14 @@ interface GetServiceStateRequest {
 
 interface ServiceState {
   status: 'loading' | 'ready' | 'error' | 'offline';
-  url: string;               // Current URL
-  title: string;             // Page title
-  canGoBack: boolean;        // Navigation state
-  canGoForward: boolean;     // Navigation state
-  isLoading: boolean;        // Loading state
-  favicon?: string;          // Current favicon
-  notifications: number;     // Unread notification count
-  lastActiveAt: Date;        // Last user interaction
+  url: string; // Current URL
+  title: string; // Page title
+  canGoBack: boolean; // Navigation state
+  canGoForward: boolean; // Navigation state
+  isLoading: boolean; // Loading state
+  favicon?: string; // Current favicon
+  notifications: number; // Unread notification count
+  lastActiveAt: Date; // Last user interaction
 }
 
 interface GetServiceStateResponse {
@@ -144,6 +151,7 @@ interface GetServiceStateResponse {
 ```
 
 ### UpdateServiceState
+
 **Purpose**: Update service runtime state (internal use)
 
 ```typescript
@@ -159,12 +167,13 @@ interface UpdateServiceStateResponse {
 ```
 
 ### RefreshService
+
 **Purpose**: Reload service content
 
 ```typescript
 interface RefreshServiceRequest {
   serviceId: string;
-  clearCache?: boolean;      // Whether to clear cache
+  clearCache?: boolean; // Whether to clear cache
 }
 
 interface RefreshServiceResponse {
@@ -176,6 +185,7 @@ interface RefreshServiceResponse {
 ## Service Navigation API
 
 ### NavigateService
+
 **Purpose**: Navigate service to specific URL
 
 ```typescript
@@ -192,6 +202,7 @@ interface NavigateServiceResponse {
 ```
 
 ### GoBack
+
 **Purpose**: Navigate service back in history
 
 ```typescript
@@ -207,6 +218,7 @@ interface GoBackResponse {
 ```
 
 ### GoForward
+
 **Purpose**: Navigate service forward in history
 
 ```typescript
@@ -222,12 +234,13 @@ interface GoForwardResponse {
 ```
 
 ### GetServiceHistory
+
 **Purpose**: Retrieve service navigation history
 
 ```typescript
 interface GetServiceHistoryRequest {
   serviceId: string;
-  maxEntries?: number;       // Limit history entries
+  maxEntries?: number; // Limit history entries
 }
 
 interface HistoryEntry {
@@ -248,13 +261,14 @@ interface GetServiceHistoryResponse {
 ## Service Notification API
 
 ### GetNotifications
+
 **Purpose**: Retrieve service notifications
 
 ```typescript
 interface GetNotificationsRequest {
-  serviceId?: string;        // Optional service filter
-  limit?: number;            // Limit results
-  since?: Date;              // Only notifications after date
+  serviceId?: string; // Optional service filter
+  limit?: number; // Limit results
+  since?: Date; // Only notifications after date
 }
 
 interface ServiceNotification {
@@ -263,7 +277,7 @@ interface ServiceNotification {
   title: string;
   body: string;
   icon?: string;
-  url?: string;              // Associated URL
+  url?: string; // Associated URL
   timestamp: Date;
   read: boolean;
   priority: 'low' | 'normal' | 'high';
@@ -278,6 +292,7 @@ interface GetNotificationsResponse {
 ```
 
 ### MarkNotificationRead
+
 **Purpose**: Mark notification as read
 
 ```typescript
@@ -292,12 +307,13 @@ interface MarkNotificationReadResponse {
 ```
 
 ### ClearNotifications
+
 **Purpose**: Clear service notifications
 
 ```typescript
 interface ClearNotificationsRequest {
-  serviceId?: string;        // Optional service filter
-  olderThan?: Date;          // Clear notifications older than date
+  serviceId?: string; // Optional service filter
+  olderThan?: Date; // Clear notifications older than date
 }
 
 interface ClearNotificationsResponse {
@@ -310,6 +326,7 @@ interface ClearNotificationsResponse {
 ## Service User Agent API
 
 ### SetUserAgent
+
 **Purpose**: Set custom user agent for service
 
 ```typescript
@@ -325,6 +342,7 @@ interface SetUserAgentResponse {
 ```
 
 ### GetUserAgent
+
 **Purpose**: Get current user agent for service
 
 ```typescript
@@ -335,12 +353,13 @@ interface GetUserAgentRequest {
 interface GetUserAgentResponse {
   success: boolean;
   userAgent?: string;
-  isCustom: boolean;         // Whether custom or default
+  isCustom: boolean; // Whether custom or default
   error?: string;
 }
 ```
 
 ### ResetUserAgent
+
 **Purpose**: Reset to default user agent
 
 ```typescript
@@ -357,6 +376,7 @@ interface ResetUserAgentResponse {
 ## Service Content Blocking API
 
 ### UpdateBlockingRules
+
 **Purpose**: Update ad/tracker blocking for service
 
 ```typescript
@@ -365,7 +385,7 @@ interface UpdateBlockingRulesRequest {
   rules: {
     blockAds: boolean;
     blockTrackers: boolean;
-    customRules?: string[];   // Custom blocking rules
+    customRules?: string[]; // Custom blocking rules
   };
 }
 
@@ -376,12 +396,13 @@ interface UpdateBlockingRulesResponse {
 ```
 
 ### GetBlockingStats
+
 **Purpose**: Get blocking statistics for service
 
 ```typescript
 interface GetBlockingStatsRequest {
   serviceId: string;
-  since?: Date;              // Statistics since date
+  since?: Date; // Statistics since date
 }
 
 interface BlockingStats {
@@ -401,40 +422,43 @@ interface GetBlockingStatsResponse {
 ## Service Development API
 
 ### InjectCSS
+
 **Purpose**: Inject custom CSS into service (development mode)
 
 ```typescript
 interface InjectCSSRequest {
   serviceId: string;
   css: string;
-  persistent?: boolean;      // Whether to persist across reloads
+  persistent?: boolean; // Whether to persist across reloads
 }
 
 interface InjectCSSResponse {
   success: boolean;
-  cssId?: string;           // CSS injection ID
+  cssId?: string; // CSS injection ID
   error?: string;
 }
 ```
 
 ### ExecuteScript
+
 **Purpose**: Execute JavaScript in service context (development mode)
 
 ```typescript
 interface ExecuteScriptRequest {
   serviceId: string;
   script: string;
-  worldId?: string;         // Isolated world ID
+  worldId?: string; // Isolated world ID
 }
 
 interface ExecuteScriptResponse {
   success: boolean;
-  result?: any;             // Script execution result
+  result?: any; // Script execution result
   error?: string;
 }
 ```
 
 ### GetConsoleMessages
+
 **Purpose**: Retrieve console messages from service
 
 ```typescript
@@ -462,6 +486,7 @@ interface GetConsoleMessagesResponse {
 ## Service Performance API
 
 ### GetPerformanceMetrics
+
 **Purpose**: Retrieve service performance metrics
 
 ```typescript
@@ -471,16 +496,16 @@ interface GetPerformanceMetricsRequest {
 
 interface PerformanceMetrics {
   memoryUsage: {
-    used: number;            // Bytes
-    total: number;           // Bytes
+    used: number; // Bytes
+    total: number; // Bytes
   };
-  cpuUsage: number;          // Percentage
+  cpuUsage: number; // Percentage
   networkRequests: {
     total: number;
     failed: number;
     averageResponseTime: number; // Milliseconds
   };
-  loadTime: number;          // Page load time in milliseconds
+  loadTime: number; // Page load time in milliseconds
   lastUpdated: Date;
 }
 
@@ -492,6 +517,7 @@ interface GetPerformanceMetricsResponse {
 ```
 
 ### OptimizeService
+
 **Purpose**: Perform service optimization
 
 ```typescript
@@ -507,7 +533,7 @@ interface OptimizeServiceRequest {
 
 interface OptimizeServiceResponse {
   success: boolean;
-  memoryFreed?: number;      // Bytes freed
+  memoryFreed?: number; // Bytes freed
   error?: string;
 }
 ```
@@ -515,6 +541,7 @@ interface OptimizeServiceResponse {
 ## Batch Operations API
 
 ### BatchUpdateServices
+
 **Purpose**: Update multiple services in a single operation
 
 ```typescript
@@ -537,17 +564,18 @@ interface BatchUpdateServicesResponse {
 ```
 
 ### BatchDeleteServices
+
 **Purpose**: Delete multiple services in a single operation
 
 ```typescript
 interface BatchDeleteServicesRequest {
   serviceIds: string[];
-  clearSessions?: boolean;   // Whether to clear associated sessions
+  clearSessions?: boolean; // Whether to clear associated sessions
 }
 
 interface BatchDeleteServicesResponse {
   success: boolean;
-  deleted: string[];         // Successfully deleted service IDs
+  deleted: string[]; // Successfully deleted service IDs
   failed: {
     serviceId: string;
     error: string;
@@ -559,6 +587,7 @@ interface BatchDeleteServicesResponse {
 ## Service Validation API
 
 ### ValidateServiceUrl
+
 **Purpose**: Validate and normalize service URL
 
 ```typescript
@@ -569,14 +598,15 @@ interface ValidateServiceUrlRequest {
 
 interface ValidateServiceUrlResponse {
   valid: boolean;
-  normalizedUrl?: string;    // Normalized URL
-  accessible?: boolean;      // Whether URL is accessible
-  redirectUrl?: string;      // Final URL after redirects
+  normalizedUrl?: string; // Normalized URL
+  accessible?: boolean; // Whether URL is accessible
+  redirectUrl?: string; // Final URL after redirects
   error?: string;
 }
 ```
 
 ### ValidateServiceName
+
 **Purpose**: Validate service name for uniqueness and format
 
 ```typescript
@@ -588,11 +618,12 @@ interface ValidateServiceNameRequest {
 
 interface ValidateServiceNameResponse {
   valid: boolean;
-  available: boolean;        // Whether name is available in workspace
-  suggestions?: string[];    // Alternative name suggestions
+  available: boolean; // Whether name is available in workspace
+  suggestions?: string[]; // Alternative name suggestions
   error?: string;
 }
 ```
 
 ---
-*All service APIs support comprehensive error handling and validation*
+
+_All service APIs support comprehensive error handling and validation_

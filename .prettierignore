@@ -1,0 +1,13 @@
+node_modules/
+dist/
+release/
+build/
+coverage/
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.tgz
+*.tar.gz
+.husky/_/
