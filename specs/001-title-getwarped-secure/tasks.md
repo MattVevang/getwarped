@@ -78,48 +78,48 @@ implementation**
 
 ### Contract Tests
 
-- [ ] T013 [P] Contract test for service:create IPC channel in
+- [x] T013 [P] Contract test for service:create IPC channel in
       tests/integration/ipc/test_service_create.spec.ts
-- [ ] T014 [P] Contract test for service:update IPC channel in
+- [x] T014 [P] Contract test for service:update IPC channel in
       tests/integration/ipc/test_service_update.spec.ts
-- [ ] T015 [P] Contract test for service:delete IPC channel in
+- [x] T015 [P] Contract test for service:delete IPC channel in
       tests/integration/ipc/test_service_delete.spec.ts
-- [ ] T016 [P] Contract test for workspace:create IPC channel in
+- [x] T016 [P] Contract test for workspace:create IPC channel in
       tests/integration/ipc/test_workspace_create.spec.ts
-- [ ] T017 [P] Contract test for workspace:update IPC channel in
+- [x] T017 [P] Contract test for workspace:update IPC channel in
       tests/integration/ipc/test_workspace_update.spec.ts
-- [ ] T018 [P] Contract test for config:export IPC channel in
+- [x] T018 [P] Contract test for config:export IPC channel in
       tests/integration/ipc/test_config_export.spec.ts
-- [ ] T019 [P] Contract test for config:import IPC channel in
+- [x] T019 [P] Contract test for config:import IPC channel in
       tests/integration/ipc/test_config_import.spec.ts
-- [ ] T020 [P] Contract test for session:clear IPC channel in
+- [x] T020 [P] Contract test for session:clear IPC channel in
       tests/integration/ipc/test_session_clear.spec.ts
-- [ ] T021 [P] Contract test for browserview:create IPC channel in
+- [x] T021 [P] Contract test for browserview:create IPC channel in
       tests/integration/ipc/test_browserview_create.spec.ts
 
 ### Integration Tests
 
-- [ ] T022 [P] Integration test for workspace creation workflow in
-      tests/integration/workflows/test_workspace_creation.spec.ts
-- [ ] T023 [P] Integration test for service addition workflow in
-      tests/integration/workflows/test_service_addition.spec.ts
-- [ ] T024 [P] Integration test for export/import configuration workflow in
-      tests/integration/workflows/test_export_import.spec.ts
-- [ ] T025 [P] Integration test for session isolation verification in
-      tests/integration/security/test_session_isolation.spec.ts
-- [ ] T026 [P] Integration test for credential storage security in
-      tests/integration/security/test_credential_security.spec.ts
-- [ ] T027 [P] Integration test for BrowserView isolation in
-      tests/integration/security/test_browserview_isolation.spec.ts
+- [x] T022 [P] Integration test for workspace creation workflow in
+      tests/integration/workflows/test_workspace_management.spec.ts
+- [x] T023 [P] Integration test for service addition workflow in
+      tests/integration/workflows/test_service_lifecycle.spec.ts
+- [x] T024 [P] Integration test for export/import configuration workflow in
+      tests/integration/workflows/test_configuration_persistence.spec.ts
+- [x] T025 [P] Integration test for session isolation verification in
+      tests/integration/workflows/test_session_isolation.spec.ts
+- [x] T026 [P] Integration test for credential storage security in
+      tests/integration/security/test_security_validation.spec.ts
+- [x] T027 [P] Integration test for BrowserView isolation and error handling in
+      tests/integration/error-handling/test_error_handling.spec.ts
 
 ### E2E Tests
 
-- [ ] T028 [P] E2E test for first-time app setup in
-      tests/e2e/test_first_time_setup.spec.ts
-- [ ] T029 [P] E2E test for complete service management in
-      tests/e2e/test_service_management.spec.ts
-- [ ] T030 [P] E2E test for export/import workflow in
-      tests/e2e/test_export_import_workflow.spec.ts
+- [x] T028 [P] E2E test for first-time app setup and user workflows in
+      tests/e2e/workflows/test_user_workflows.spec.ts
+- [x] T029 [P] E2E test for complete service management and configuration in
+      tests/e2e/configuration/test_configuration_management.spec.ts
+- [x] T030 [P] E2E test for application lifecycle and persistence in
+      tests/e2e/lifecycle/test_application_lifecycle.spec.ts
 
 ## Phase 3.3: Core Models & Types (ONLY after tests are failing)
 
