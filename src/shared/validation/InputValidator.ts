@@ -788,6 +788,19 @@ export const Validators = {
       pattern: /^[a-zA-Z0-9\s\-_.()/;:,]+$/,
       patternError: 'User agent contains invalid characters',
     }),
+
+  /**
+   * Validates UUID strings (v4 format)
+   */
+  validateUUID: (input: string): ValidationResult => {
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return InputValidator.validateText(input, {
+      pattern: uuidPattern,
+      patternError: 'Invalid UUID format',
+      trim: true,
+      toLowerCase: true,
+    });
+  },
 };
 
 // Export the main validator class and convenience validators

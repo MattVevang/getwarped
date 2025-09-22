@@ -85,6 +85,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.0",
+    "@types/uuid": "^10.0.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^2.1.1",
     "antd": "^5.15.0",
@@ -98,7 +99,8 @@
     "react-hook-form": "^7.50.0",
     "react-hot-toast": "^2.4.1",
     "react-redux": "^9.1.0",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "uuid": "^13.0.0"
   },
   "build": {
     "appId": "com.getwarped.app",
