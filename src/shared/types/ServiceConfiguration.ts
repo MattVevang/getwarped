@@ -18,6 +18,8 @@ export interface ServiceTheme {
   backgroundColor?: string;
   /** Custom text color */
   textColor?: string;
+  /** Custom CSS styles */
+  customCSS?: string;
 }
 
 /**
@@ -63,29 +65,41 @@ export interface ServiceConfiguration {
   /** Parent workspace reference (UUID) */
   workspaceId: string;
 
+  /** Optional service category */
+  category?: string;
+
+  /** Optional service description */
+  description?: string;
+
   /** Display order within workspace (0-based, lower = higher priority) */
-  position: number;
+  position?: number;
+
+  /** Sort order for services within workspace */
+  sortOrder: number;
 
   /** Service-specific theming configuration */
   theme?: ServiceTheme;
 
   /** Enable/disable notifications for this service */
-  notifications: boolean;
+  notifications?: boolean;
+
+  /** Whether the service is currently active/enabled */
+  isActive: boolean;
 
   /** Creation timestamp */
-  createdAt: Date;
+  createdAt: Date | string;
 
   /** Last modification timestamp */
-  updatedAt: Date;
+  updatedAt: Date | string;
 
   /** Optional custom user agent for service requests */
   customUserAgent?: string;
 
   /** Ad blocking preference for this service */
-  blockAds: boolean;
+  blockAds?: boolean;
 
   /** Tracker blocking preference for this service */
-  blockTrackers: boolean;
+  blockTrackers?: boolean;
 }
 
 /**
@@ -160,7 +174,9 @@ export function createServiceConfiguration(
     id: generateUUID(),
     iconType: 'builtin',
     position: 0,
+    sortOrder: 0,
     notifications: true,
+    isActive: true,
     blockAds: true,
     blockTrackers: true,
     createdAt: now,

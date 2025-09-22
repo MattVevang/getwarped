@@ -176,7 +176,7 @@ implementation**
 
 ### IPC Handlers
 
-- [ ] T049 Service IPC handlers in src/main/handlers/ServiceHandlers.ts for
+- [x] T049 Service IPC handlers in src/main/handlers/ServiceHandlers.ts for
       service:create, service:update, service:delete
 - [ ] T050 Workspace IPC handlers in src/main/handlers/WorkspaceHandlers.ts for
       workspace operations

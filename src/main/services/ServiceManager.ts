@@ -81,18 +81,20 @@ export interface ServiceQueryOptions {
  * ServiceManager class for managing service configurations
  */
 export class ServiceManager {
-  private store: Store<Record<string, ServiceConfiguration>>;
+  private store: Store<{ services: Record<string, ServiceConfiguration> }>;
   private validator: ServiceConfigurationValidator;
   private readonly storeKey = 'services';
 
   constructor() {
     // Initialize electron-store with schema validation
-    this.store = new Store({
+    const encryptionKey = process.env['GETWARPED_ENCRYPTION_KEY'];
+
+    this.store = new Store<{ services: Record<string, ServiceConfiguration> }>({
       name: 'services',
-      defaults: {},
-      encryptionKey: process.env.GETWARPED_ENCRYPTION_KEY,
+      defaults: { services: {} },
+      ...(encryptionKey && { encryptionKey }),
       schema: {
-        [this.storeKey]: {
+        services: {
           type: 'object',
           additionalProperties: {
             type: 'object',
@@ -121,7 +123,10 @@ export class ServiceManager {
       // Validate input data
       const inputValidation = this.validateCreateRequest(request);
       if (!inputValidation.success) {
-        return inputValidation;
+        return {
+          success: false,
+          error: inputValidation.error || 'Validation failed',
+        };
       }
 
       // Generate unique service ID
@@ -134,9 +139,10 @@ export class ServiceManager {
         name: request.name.trim(),
         url: request.url.trim(),
         workspaceId: request.workspaceId,
-        icon: request.icon,
-        category: request.category || 'general',
-        description: request.description,
+        ...(request.icon && { icon: request.icon }),
+        iconType: 'builtin',
+        ...(request.category && { category: request.category }),
+        ...(request.description && { description: request.description }),
         theme: request.theme || {
           primaryColor: '#007bff',
           backgroundColor: '#ffffff',
@@ -151,10 +157,10 @@ export class ServiceManager {
 
       // Validate the complete service configuration
       const validation = await this.validator.validate(serviceConfig);
-      if (!validation.isValid) {
+      if (!validation.valid) {
         return {
           success: false,
-          error: `Service configuration validation failed: ${validation.errors.join(', ')}`,
+          error: `Service configuration validation failed: ${validation.errors?.map(e => e.message).join(', ') || 'Unknown validation error'}`,
         };
       }
 
@@ -179,7 +185,6 @@ export class ServiceManager {
       return {
         success: true,
         data: serviceConfig,
-        warnings: validation.warnings,
       };
     } catch (error) {
       return {
@@ -206,7 +211,10 @@ export class ServiceManager {
       // Validate update data
       const inputValidation = this.validateUpdateRequest(request.updates);
       if (!inputValidation.success) {
-        return inputValidation;
+        return {
+          success: false,
+          error: inputValidation.error || 'Update validation failed',
+        };
       }
 
       // Check for duplicate names if name is being updated
@@ -237,10 +245,10 @@ export class ServiceManager {
 
       // Validate the updated configuration
       const validation = await this.validator.validate(updatedService);
-      if (!validation.isValid) {
+      if (!validation.valid) {
         return {
           success: false,
-          error: `Updated service configuration validation failed: ${validation.errors.join(', ')}`,
+          error: `Updated service configuration validation failed: ${validation.errors?.map(e => e.message).join(', ') || 'Unknown validation error'}`,
         };
       }
 
@@ -252,7 +260,6 @@ export class ServiceManager {
       return {
         success: true,
         data: updatedService,
-        warnings: validation.warnings,
       };
     } catch (error) {
       return {
@@ -347,6 +354,9 @@ export class ServiceManager {
       results.sort((a, b) => {
         const aVal = a[field];
         const bVal = b[field];
+        if (aVal == null && bVal == null) return 0;
+        if (aVal == null) return order === 'asc' ? 1 : -1;
+        if (bVal == null) return order === 'asc' ? -1 : 1;
         if (aVal < bVal) return order === 'asc' ? -1 : 1;
         if (aVal > bVal) return order === 'asc' ? 1 : -1;
         return 0;

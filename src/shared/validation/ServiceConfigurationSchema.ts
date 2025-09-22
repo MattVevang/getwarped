@@ -426,5 +426,25 @@ export function validateServiceConfigurationComplete(
   return schemaResult;
 }
 
+/**
+ * ServiceConfigurationValidator class for object-oriented validation
+ */
+export class ServiceConfigurationValidator {
+  /**
+   * Validate a ServiceConfiguration object
+   */
+  async validate(config: ServiceConfiguration): Promise<ValidationResult<ServiceConfiguration>> {
+    return validateServiceConfigurationComplete(config);
+  }
+
+  /**
+   * Quick validation check (returns boolean)
+   */
+  isValid(config: ServiceConfiguration): boolean {
+    const result = validateServiceConfigurationWithResult(config);
+    return result.valid;
+  }
+}
+
 // Export the schemas for external use if needed
 export { serviceConfigurationSchema, serviceThemeSchema };
