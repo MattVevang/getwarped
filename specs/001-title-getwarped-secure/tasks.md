@@ -220,26 +220,26 @@ implementation**
 
 ### State Management (Redux Toolkit)
 
-- [ ] T063 Redux store configuration in src/renderer/store/store.ts with
+- [x] T063 Redux store configuration in src/renderer/store/store.ts with
       redux-persist@^6.0.0
-- [ ] T064 Services slice in src/renderer/store/slices/servicesSlice.ts with
+- [x] T064 Services slice in src/renderer/store/slices/servicesSlice.ts with
       createAsyncThunk
-- [ ] T065 Workspaces slice in src/renderer/store/slices/workspacesSlice.ts with
+- [x] T065 Workspaces slice in src/renderer/store/slices/workspacesSlice.ts with
       reordering actions
-- [ ] T066 UI state slice in src/renderer/store/slices/uiSlice.ts for theme and
+- [x] T066 UI state slice in src/renderer/store/slices/uiSlice.ts for theme and
       preferences
-- [ ] T067 Export/import slice in src/renderer/store/slices/exportImportSlice.ts
+- [x] T067 Export/import slice in src/renderer/store/slices/exportImportSlice.ts
       with security validation
 
 ### Core React Components (with Ant Design)
 
-- [ ] T068 [P] App component in src/renderer/components/App.tsx with routing and
+- [x] T068 [P] App component in src/renderer/components/App.tsx with routing and
       theme provider
-- [ ] T069 [P] Sidebar component in src/renderer/components/Sidebar/Sidebar.tsx
+- [x] T069 [P] Sidebar component in src/renderer/components/Sidebar/Sidebar.tsx
       with antd@^5.12.0
-- [ ] T070 [P] WorkspaceList component in
+- [x] T070 [P] WorkspaceList component in
       src/renderer/components/Sidebar/WorkspaceList.tsx with drag-and-drop
-- [ ] T071 [P] ServiceList component in
+- [x] T071 [P] ServiceList component in
       src/renderer/components/Sidebar/ServiceList.tsx with react-dnd@^16.0.0
 - [ ] T072 [P] MainContent component in
       src/renderer/components/MainContent/MainContent.tsx with service view
