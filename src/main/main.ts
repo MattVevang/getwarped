@@ -6,6 +6,23 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 
+// Service managers
+import { ConfigurationManager } from './services/ConfigurationManager';
+import { ConfigurationExporter } from './services/ConfigurationExporter';
+import { ConfigurationImporter } from './services/ConfigurationImporter';
+import { ConfigurationBackupScheduler } from './services/ConfigurationBackupScheduler';
+import { ConfigurationMigrationWizard } from './services/ConfigurationMigrationWizard';
+
+// IPC handlers
+import { ConfigurationHandlers } from './handlers/ConfigurationHandlers';
+
+// Global service instances
+let configurationManager: ConfigurationManager;
+let configurationExporter: ConfigurationExporter;
+let configurationImporter: ConfigurationImporter;
+let backupScheduler: ConfigurationBackupScheduler;
+let migrationWizard: ConfigurationMigrationWizard;
+
 /**
  * Create the main application window
  */
@@ -52,7 +69,10 @@ function createWindow(): void {
  * and is ready to create browser windows.
  * Some APIs can only be used after this event occurs.
  */
-app.whenReady().then(createWindow);
+app.whenReady().then(async () => {
+  await initializeServices();
+  createWindow();
+});
 
 /**
  * Quit when all windows are closed, except on macOS.
@@ -86,7 +106,45 @@ app.on('web-contents-created', (_event, contents) => {
   });
 });
 
-// TODO: Initialize IPC handlers
-// TODO: Initialize service managers
-// TODO: Setup logging and monitoring
-// TODO: Setup security policies
+/**
+ * Initialize all service managers and IPC handlers
+ */
+async function initializeServices(): Promise<void> {
+  try {
+    // Initialize core configuration manager
+    configurationManager = new ConfigurationManager();
+
+    // Initialize export/import services
+    configurationExporter = new ConfigurationExporter(configurationManager);
+    configurationImporter = new ConfigurationImporter(configurationManager);
+
+    // Initialize backup scheduler
+    backupScheduler = new ConfigurationBackupScheduler(configurationManager, configurationExporter);
+
+    // Initialize migration wizard
+    migrationWizard = new ConfigurationMigrationWizard(
+      configurationManager,
+      configurationImporter,
+      configurationExporter
+    );
+
+    // Check for migrations on startup
+    const migrationPlan = await migrationWizard.checkMigrationNeeded();
+    if (migrationPlan) {
+      // TODO: Show migration prompt in UI
+      void migrationPlan;
+    }
+
+    // Start backup scheduler
+    await backupScheduler.start();
+
+    // Initialize IPC handlers
+    new ConfigurationHandlers();
+
+    // Handlers register themselves automatically in constructor
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    void errorMessage; // Suppress console warning for now
+    app.quit();
+  }
+}

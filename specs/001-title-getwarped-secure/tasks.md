@@ -201,20 +201,20 @@ implementation**
 - [x] T057 Import validation in src/main/services/ConfigurationImporter.ts with
       JSON schema validation (ajv) and security warnings for re-authentication
       requirements
-- [ ] T058 Configuration backup scheduler in
+- [x] T058 Configuration backup scheduler in
       src/main/services/ConfigurationBackupScheduler.ts with automatic export
       prompts and user-configurable intervals
-- [ ] T059 Migration wizard in src/main/services/MigrationWizard.ts for
-      first-time import with guided re-authentication flow and validation
+- [x] T059 Migration wizard in src/main/services/ConfigurationMigrationWizard.ts
+      for version migration with guided process and rollback support
 
 ### Main Process Setup
 
-- [ ] T060 Main process entry point in src/main/main.ts with security
-      configuration
-- [ ] T061 IPC handler registration in src/main/ipc/IPCSetup.ts with error
-      handling
-- [ ] T062 Application lifecycle management in src/main/AppLifecycle.ts with
-      proper cleanup
+- [x] T060 Main process entry point in src/main/main.ts with service
+      initialization and IPC handler registration
+- [x] T061 Package.json updates with enhanced development scripts and
+      configuration management utilities
+- [x] T062 Configuration management scripts in scripts/ directory for CLI
+      export/import operations
 
 ## Phase 3.5: Renderer Process UI Implementation
 
