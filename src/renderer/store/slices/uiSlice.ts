@@ -9,7 +9,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   UIState,
   WindowState,
-  ModalState,
   ConfirmDialogState,
   SearchState,
   ToastNotification,
@@ -44,8 +43,6 @@ const initialState: UIState = {
     maximized: false,
     fullscreen: false,
     alwaysOnTop: false,
-    x: undefined,
-    y: undefined,
   },
   modals: {
     settingsOpen: false,
@@ -56,11 +53,7 @@ const initialState: UIState = {
   },
   search: {
     query: '',
-    filters: {
-      category: undefined,
-      workspace: undefined,
-      status: undefined,
-    },
+    filters: {},
     results: [],
     searching: false,
   },
@@ -225,15 +218,15 @@ export const uiSlice = createSlice({
         message: action.payload.message,
         timeout: action.payload.duration || (action.payload.type === 'error' ? 6000 : 4000),
         createdAt: new Date(),
-        actions: action.payload.action
-          ? [
-              {
-                label: action.payload.action.label,
-                action: 'custom-action',
-                style: 'primary',
-              },
-            ]
-          : undefined,
+        ...(action.payload.action && {
+          actions: [
+            {
+              label: action.payload.action.label,
+              action: 'custom-action',
+              style: 'primary',
+            },
+          ],
+        }),
       };
 
       state.toasts.push(toast);

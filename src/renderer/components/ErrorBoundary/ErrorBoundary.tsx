@@ -8,7 +8,7 @@
  * @fileoverview Production-ready error boundary component
  */
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import { Result, Button, Space, Collapse, Typography, Card, Divider } from 'antd';
 import { ReloadOutlined, BugOutlined, WarningOutlined } from '@ant-design/icons';
 
@@ -29,8 +29,8 @@ interface Props {
 
 interface State {
   hasError: boolean;
-  error?: Error;
-  errorInfo?: ErrorInfo;
+  error?: Error | null;
+  errorInfo?: ErrorInfo | null;
   errorId: string;
   recoveryAttempts: number;
   isRecovering: boolean;
@@ -59,7 +59,7 @@ const sanitizeStackTrace = (stack: string): string => {
 class ErrorBoundary extends Component<Props, State> {
   private retryTimeoutId?: NodeJS.Timeout;
 
-  public state: State = {
+  public override state: State = {
     hasError: false,
     errorId: '',
     recoveryAttempts: 0,
@@ -75,7 +75,7 @@ class ErrorBoundary extends Component<Props, State> {
     };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  public override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Update state with error info
     this.setState({
       errorInfo,
@@ -90,7 +90,7 @@ class ErrorBoundary extends Component<Props, State> {
     }
   }
 
-  public componentWillUnmount() {
+  public override componentWillUnmount() {
     if (this.retryTimeoutId) {
       clearTimeout(this.retryTimeoutId);
     }
@@ -102,8 +102,8 @@ class ErrorBoundary extends Component<Props, State> {
   private reportError = (error: Error, errorInfo: ErrorInfo): void => {
     try {
       // Check if Electron API is available
-      if (window.electronAPI?.logError) {
-        window.electronAPI.logError('react-error-boundary', {
+      if ((window as any).electron?.ipcRenderer?.invoke) {
+        (window as any).electron.ipcRenderer.invoke('log-error', 'react-error-boundary', {
           errorId: this.state.errorId,
           message: error.message,
           stack: error.stack,
@@ -129,33 +129,12 @@ class ErrorBoundary extends Component<Props, State> {
 
     this.setState({
       hasError: false,
-      error: undefined,
-      errorInfo: undefined,
+      error: null,
+      errorInfo: null,
       errorId: '',
       recoveryAttempts: 0,
       isRecovering: false,
     });
-  };
-
-  /**
-   * Attempt automatic recovery
-   */
-  private attemptRecovery = (): void => {
-    const maxAttempts = this.props.maxRecoveryAttempts ?? 2;
-
-    if (this.state.recoveryAttempts >= maxAttempts) {
-      return; // Max attempts reached
-    }
-
-    this.setState({
-      isRecovering: true,
-      recoveryAttempts: this.state.recoveryAttempts + 1,
-    });
-
-    // Wait a moment then reset
-    this.retryTimeoutId = setTimeout(() => {
-      this.resetErrorBoundary();
-    }, 2000);
   };
 
   /**
@@ -195,7 +174,7 @@ class ErrorBoundary extends Component<Props, State> {
     }
   };
 
-  public render(): ReactNode {
+  public override render(): ReactNode {
     if (this.state.hasError && this.state.error) {
       // Use custom fallback if provided
       if (this.props.fallback) {
@@ -227,7 +206,7 @@ class ErrorBoundary extends Component<Props, State> {
         );
       }
 
-      const isDevelopment = process.env.NODE_ENV === 'development';
+      const isDevelopment = process.env['NODE_ENV'] === 'development';
       const showDetails = this.props.showDetails ?? isDevelopment;
 
       return (

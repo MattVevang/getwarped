@@ -15,7 +15,6 @@ import {
   NotificationOutlined,
   EyeOutlined,
   EyeInvisibleOutlined,
-  SettingOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
 import { ServiceConfiguration } from '../../../shared/types/ServiceConfiguration';
@@ -73,58 +72,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       onClick(service);
     }
   }, [onClick, service]);
-
-  /**
-   * Handle edit action
-   */
-  const handleEdit = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      if (onEdit) {
-        onEdit(service);
-      }
-    },
-    [onEdit, service]
-  );
-
-  /**
-   * Handle delete action
-   */
-  const handleDelete = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      if (onDelete) {
-        onDelete(service);
-      }
-    },
-    [onDelete, service]
-  );
-
-  /**
-   * Handle toggle active state
-   */
-  const handleToggleActive = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      if (onToggleActive) {
-        onToggleActive(service);
-      }
-    },
-    [onToggleActive, service]
-  );
-
-  /**
-   * Handle refresh action
-   */
-  const handleRefresh = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      if (onRefresh) {
-        onRefresh(service);
-      }
-    },
-    [onRefresh, service]
-  );
 
   /**
    * Get health status indicator
@@ -222,16 +169,24 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   const handleMenuClick = ({ key }: { key: string }) => {
     switch (key) {
       case 'edit':
-        handleEdit({} as React.MouseEvent);
+        if (onEdit) {
+          onEdit(service);
+        }
         break;
       case 'toggle':
-        handleToggleActive({} as React.MouseEvent);
+        if (onToggleActive) {
+          onToggleActive(service);
+        }
         break;
       case 'refresh':
-        handleRefresh({} as React.MouseEvent);
+        if (onRefresh) {
+          onRefresh(service);
+        }
         break;
       case 'delete':
-        handleDelete({} as React.MouseEvent);
+        if (onDelete) {
+          onDelete(service);
+        }
         break;
     }
   };
@@ -279,7 +234,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
   return (
     <Card
-      className={className}
+      {...(className && { className })}
       style={getCardStyle()}
       hoverable
       onClick={handleClick}

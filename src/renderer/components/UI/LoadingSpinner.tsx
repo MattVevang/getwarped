@@ -90,7 +90,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   const config = sizeConfigs[size];
 
   // Custom spinner indicator
-  const indicator = <CustomLoadingIcon size={size} color={color} />;
+  const indicator = <CustomLoadingIcon size={size} {...(color !== undefined && { color })} />;
 
   // Base spinner component
   const spinnerElement = (
@@ -98,6 +98,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       {...props}
       indicator={indicator}
       tip={text}
+      data-testid='loading-spinner'
       className={`loading-spinner ${className || ''}`}
       style={{
         ...style,

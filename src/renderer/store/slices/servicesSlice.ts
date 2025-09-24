@@ -105,17 +105,19 @@ export const createService = createAsyncThunk(
           id: `service-${Date.now()}`,
           name: request.name,
           url: request.url,
-          icon: request.icon,
+          ...(request.icon !== undefined && { icon: request.icon }),
           iconType: request.iconType,
           workspaceId: request.workspaceId,
           position: 0,
           sortOrder: Date.now(),
-          theme: request.theme,
+          ...(request.theme !== undefined && { theme: request.theme }),
           notifications: true,
           isActive: true,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          customUserAgent: request.customUserAgent,
+          ...(request.customUserAgent !== undefined && {
+            customUserAgent: request.customUserAgent,
+          }),
           blockAds: false,
           blockTrackers: false,
         },
@@ -137,7 +139,7 @@ export const createService = createAsyncThunk(
  */
 export const updateService = createAsyncThunk(
   'services/update',
-  async (request: UpdateServiceRequest, { rejectWithValue, getState }) => {
+  async (request: UpdateServiceRequest, { rejectWithValue }) => {
     try {
       // TODO: Replace with actual IPC call when IPCService is available
       // const response = await ipcService.invoke('service:update', request);
@@ -189,7 +191,7 @@ export const deleteService = createAsyncThunk(
  */
 export const fetchServices = createAsyncThunk(
   'services/fetch',
-  async (request: GetServicesRequest = {}, { rejectWithValue }) => {
+  async (_request: GetServicesRequest = {}, { rejectWithValue }) => {
     try {
       // TODO: Replace with actual IPC call when IPCService is available
       // const response = await ipcService.invoke('service:list', request);

@@ -1,18 +1,33 @@
 /** @type {import('jest').Config} */
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom', // Changed from 'node' to 'jsdom' for React components
   roots: ['<rootDir>/src', '<rootDir>/tests'],
   testMatch: [
     '**/tests/**/*.test.ts',
     '**/tests/**/*.spec.ts',
+    '**/tests/**/*.test.tsx', // Added tsx support
+    '**/tests/**/*.spec.tsx', // Added tsx support
     '**/__tests__/**/*.ts',
+    '**/__tests__/**/*.tsx', // Added tsx support
     '**/?(*.)+(spec|test).ts',
+    '**/?(*.)+(spec|test).tsx', // Added tsx support
   ],
   transform: {
-    '^.+\\.ts$': 'ts-jest',
-    '^.+\\.tsx$': 'ts-jest',
+    '^.+\\.ts$': ['ts-jest', { 
+      tsconfig: {
+        jsx: 'react-jsx' // Enable JSX support
+      }
+    }],
+    '^.+\\.tsx$': ['ts-jest', { 
+      tsconfig: {
+        jsx: 'react-jsx' // Enable JSX support
+      }
+    }],
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(react-dnd|dnd-core|@react-dnd|react-dnd-html5-backend|react-hot-toast)/)',
+  ],
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts', '!src/**/index.ts'],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
@@ -30,9 +45,10 @@ module.exports = {
     '^@shared/(.*)$': '<rootDir>/src/shared/$1',
     '^@main/(.*)$': '<rootDir>/src/main/$1',
     '^@renderer/(.*)$': '<rootDir>/src/renderer/$1',
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy', // Mock CSS imports
   },
   testEnvironmentOptions: {
-    node: {
+    jsdom: { // Changed from node to jsdom
       experimentalVmModules: true,
     },
   },

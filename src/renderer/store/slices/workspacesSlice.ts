@@ -99,7 +99,7 @@ export const createWorkspace = createAsyncThunk(
       const workspace: Workspace = {
         id: `workspace-${Date.now()}`,
         name: request.name,
-        description: request.description,
+        ...(request.description !== undefined && { description: request.description }),
         services: [],
         theme: request.theme,
         isDefault: false,
@@ -419,8 +419,10 @@ export const workspacesSlice = createSlice({
         const remainingWorkspaces = Object.values(state.items);
         if (remainingWorkspaces.length > 0 && !remainingWorkspaces.some(w => w.isDefault)) {
           const firstWorkspace = remainingWorkspaces.sort((a, b) => a.position - b.position)[0];
-          firstWorkspace.isDefault = true;
-          state.activeWorkspaceId = firstWorkspace.id;
+          if (firstWorkspace) {
+            firstWorkspace.isDefault = true;
+            state.activeWorkspaceId = firstWorkspace.id;
+          }
         }
       })
       .addCase(deleteWorkspace.rejected, (state, action) => {
@@ -449,7 +451,9 @@ export const workspacesSlice = createSlice({
           } else if (action.payload.length > 0) {
             // If no default, use first workspace
             const firstWorkspace = action.payload.sort((a, b) => a.position - b.position)[0];
-            state.activeWorkspaceId = firstWorkspace.id;
+            if (firstWorkspace) {
+              state.activeWorkspaceId = firstWorkspace.id;
+            }
           }
         }
       })
