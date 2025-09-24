@@ -16,7 +16,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { ConfigProvider, Layout, theme } from 'antd';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { Toaster } from 'react-hot-toast';
+import { ToastProvider } from '../Notifications/NotificationToast';
 
 import { store, persistor } from '../../store/store';
 import { useAppSelector, useAppDispatch } from '../../store/store';
@@ -86,29 +86,7 @@ const AppInner: React.FC = () => {
             <ConfirmDialog />
 
             {/* Global Toast Notifications */}
-            <Toaster
-              position='top-right'
-              toastOptions={{
-                duration: 4000,
-                style: {
-                  background: effectiveTheme === 'dark' ? '#1f1f1f' : '#ffffff',
-                  color: effectiveTheme === 'dark' ? '#ffffff' : '#000000',
-                  border: `1px solid ${effectiveTheme === 'dark' ? '#434343' : '#d9d9d9'}`,
-                },
-                success: {
-                  iconTheme: {
-                    primary: '#52c41a',
-                    secondary: '#ffffff',
-                  },
-                },
-                error: {
-                  iconTheme: {
-                    primary: '#ff4d4f',
-                    secondary: '#ffffff',
-                  },
-                },
-              }}
-            />
+            <ToastProvider />
           </Layout>
         </Router>
       </DndProvider>

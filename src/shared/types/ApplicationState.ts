@@ -210,8 +210,32 @@ export interface ConfirmDialogState {
   /** Callback function identifier */
   onConfirm: string;
 
+  /** Cancel callback function identifier */
+  onCancel?: string;
+
   /** Dialog type for styling */
-  type: 'info' | 'warning' | 'error' | 'success';
+  type: 'info' | 'warning' | 'error' | 'success' | 'delete';
+
+  /** Additional details text */
+  details?: string;
+
+  /** Consequences warning text */
+  consequences?: string;
+
+  /** Require confirmation input for dangerous actions */
+  requireConfirmation?: boolean;
+
+  /** Text that must be typed to confirm */
+  confirmationText?: string;
+
+  /** Dialog width */
+  width?: number;
+
+  /** List of affected items to display */
+  affectedItems?: string[];
+
+  /** Label for affected items list */
+  affectedItemsLabel?: string;
 }
 
 /**
