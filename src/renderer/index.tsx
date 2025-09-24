@@ -10,12 +10,8 @@
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { Provider } from 'react-redux';
-import { ConfigProvider } from 'antd';
-import { store } from './store/store';
-import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
+import AppProviders from './providers/AppProviders';
 import App from './components/App/App';
-import ThemeProvider from './components/Theme/ThemeProvider';
 import './styles/global.css';
 
 // Extend window interface for Electron API and hot module reloading
@@ -38,51 +34,9 @@ declare global {
  */
 const AppRoot: React.FC = () => {
   return (
-    <ErrorBoundary>
-      <Provider store={store}>
-        <ConfigProvider
-          theme={{
-            token: {
-              // Ant Design theme customization
-              colorPrimary: '#3880F6',
-              colorSuccess: '#52c41a',
-              colorWarning: '#faad14',
-              colorError: '#ff4d4f',
-              borderRadius: 6,
-              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-            },
-            components: {
-              // Component-specific theme overrides
-              Button: {
-                borderRadius: 6,
-                controlHeight: 36,
-              },
-              Card: {
-                borderRadius: 8,
-              },
-              Modal: {
-                borderRadius: 8,
-              },
-              Input: {
-                borderRadius: 6,
-                controlHeight: 36,
-              },
-              Select: {
-                borderRadius: 6,
-                controlHeight: 36,
-              },
-              Tooltip: {
-                borderRadius: 4,
-              },
-            },
-          }}
-        >
-          <ThemeProvider>
-            <App />
-          </ThemeProvider>
-        </ConfigProvider>
-      </Provider>
-    </ErrorBoundary>
+    <AppProviders>
+      <App />
+    </AppProviders>
   );
 };
 
