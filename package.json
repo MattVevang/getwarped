@@ -23,6 +23,7 @@
     "test:e2e": "playwright test",
     "test:integration": "jest --testMatch=\"**/?(*.)+(integration|itest).+(ts|js)\"",
     "test:unit": "jest --testMatch=\"**/?(*.)+(spec|test).+(ts|js)\" --testPathIgnorePatterns=\"**/?(*.)+(integration|itest).+(ts|js)\"",
+    "test:performance": "jest --testMatch=\"**/test_*Performance*.spec.ts\"",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "format": "prettier --write .",

@@ -1,0 +1,128 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_id: ${{ steps.create_release.outputs.id }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Get version from tag
+      id: tag_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: GetWarped v${{ steps.tag_version.outputs.VERSION }}
+        draft: false
+        prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
+
+  build-and-release:
+    name: Build and Release for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: release
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            platform: win
+            arch: x64
+            ext: .exe
+            artifact: '*.exe'
+          - os: macos-latest
+            platform: mac
+            arch: x64
+            ext: .dmg
+            artifact: '*.dmg'
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+            ext: .AppImage
+            artifact: '*.AppImage'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run tests
+      run: npm test
+
+    - name: Run security audit
+      run: npm run security:scan
+
+    - name: Build application
+      run: npm run build
+
+    - name: Package application for ${{ matrix.platform }}
+      run: npm run package:${{ matrix.platform }}
+
+    - name: List release directory
+      run: ls -la release/
+      shell: bash
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.release.outputs.upload_url }}
+        asset_path: release/${{ matrix.artifact }}
+        asset_name: GetWarped-${{ matrix.platform }}-${{ matrix.arch }}${{ matrix.ext }}
+        asset_content_type: application/octet-stream
+
+  publish-security-report:
+    name: Publish Security Report
+    runs-on: ubuntu-latest
+    needs: release
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Generate security report
+      run: |
+        npm run security:scan > security-report.txt
+        npm audit --json > security-audit.json
+
+    - name: Upload Security Report
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.release.outputs.upload_url }}
+        asset_path: security-report.txt
+        asset_name: security-report.txt
+        asset_content_type: text/plain

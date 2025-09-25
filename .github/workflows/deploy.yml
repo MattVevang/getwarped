@@ -1,0 +1,178 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging')
+    environment:
+      name: staging
+      url: https://staging.getwarped.com
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run tests
+      run: npm test
+
+    - name: Build application
+      run: npm run build
+      env:
+        NODE_ENV: production
+        REACT_APP_ENVIRONMENT: staging
+
+    - name: Package for all platforms
+      run: |
+        npm run package:win
+        npm run package:mac
+        npm run package:linux
+
+    - name: Upload staging artifacts
+      run: |
+        echo "Uploading staging build artifacts..."
+        # Add your staging deployment commands here
+        # e.g., upload to staging server, update auto-updater endpoints, etc.
+
+    - name: Run staging smoke tests
+      run: |
+        echo "Running staging smoke tests..."
+        # Add your staging verification tests here
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
+    environment:
+      name: production
+      url: https://getwarped.com
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run full test suite
+      run: |
+        npm run test:unit
+        npm run test:integration
+        npm run test:e2e
+
+    - name: Run security audit
+      run: npm run security:scan
+
+    - name: Build application
+      run: npm run build
+      env:
+        NODE_ENV: production
+        REACT_APP_ENVIRONMENT: production
+
+    - name: Package for all platforms
+      run: |
+        npm run package:win
+        npm run package:mac  
+        npm run package:linux
+
+    - name: Sign applications (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        echo "Code signing Windows executable..."
+        # Add Windows code signing commands here
+      env:
+        WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+        WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+
+    - name: Sign applications (macOS)
+      if: runner.os == 'macOS'  
+      run: |
+        echo "Code signing macOS application..."
+        # Add macOS code signing and notarization commands here
+      env:
+        APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+        APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+
+    - name: Upload to distribution platforms
+      run: |
+        echo "Uploading to distribution platforms..."
+        # Add commands to upload to:
+        # - Auto-updater servers
+        # - Microsoft Store (Windows)
+        # - Mac App Store (macOS) 
+        # - Snap Store (Linux)
+        # - Direct download servers
+
+    - name: Update auto-updater feeds
+      run: |
+        echo "Updating auto-updater configuration..."
+        # Add commands to update auto-updater feeds
+
+    - name: Run production smoke tests
+      run: |
+        echo "Running production smoke tests..."
+        # Add your production verification tests here
+
+    - name: Notify deployment
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  rollback:
+    name: Rollback Production
+    runs-on: ubuntu-latest
+    if: failure()
+    environment:
+      name: production
+    
+    steps:
+    - name: Rollback to previous version
+      run: |
+        echo "Rolling back to previous production version..."
+        # Add rollback commands here
+
+    - name: Notify rollback
+      uses: 8398a7/action-slack@v3
+      with:
+        status: 'failure'
+        channel: '#deployments'
+        text: 'Production deployment failed and has been rolled back'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

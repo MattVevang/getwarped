@@ -1,0 +1,95 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    ":dependencyDashboard",
+    ":semanticPrefixFixDepsChoreOthers",
+    ":separateMajorReleases",
+    ":separateMultipleMajorReleases"
+  ],
+  "schedule": ["before 6am on monday"],
+  "timezone": "UTC",
+  "labels": ["dependencies"],
+  "assignees": ["@getwarped/maintainers"],
+  "reviewers": ["@getwarped/maintainers"],
+  "packageRules": [
+    {
+      "description": "Group Electron updates",
+      "matchPackageNames": ["electron"],
+      "groupName": "Electron",
+      "schedule": ["before 6am on the first day of the month"]
+    },
+    {
+      "description": "Group React ecosystem updates",
+      "matchPackagePatterns": ["^react"],
+      "groupName": "React ecosystem",
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Group TypeScript updates",
+      "matchPackageNames": ["typescript", "@types/node"],
+      "matchPackagePatterns": ["^@types/"],
+      "groupName": "TypeScript",
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Group testing framework updates",
+      "matchPackageNames": ["jest", "playwright", "@playwright/test"],
+      "matchPackagePatterns": ["^@jest/", "^jest-"],
+      "groupName": "Testing frameworks",
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Group webpack and build tool updates",
+      "matchPackageNames": ["webpack", "electron-builder"],
+      "matchPackagePatterns": ["^webpack-", "^@webpack/"],
+      "groupName": "Build tools",
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Group ESLint and code quality updates",
+      "matchPackageNames": ["eslint", "prettier"],
+      "matchPackagePatterns": ["^eslint-", "^@typescript-eslint/"],
+      "groupName": "Code quality tools",
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Pin security-related packages to exact versions",
+      "matchPackageNames": ["keytar", "electron-store"],
+      "rangeStrategy": "pin"
+    },
+    {
+      "description": "Auto-merge patch updates for dev dependencies",
+      "matchUpdateTypes": ["patch"],
+      "matchDepTypes": ["devDependencies"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "description": "Require manual review for major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["major-update", "needs-review"]
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security", "vulnerability"],
+    "assignees": ["@getwarped/security-team"],
+    "reviewers": ["@getwarped/security-team"],
+    "schedule": ["at any time"],
+    "prPriority": 10
+  },
+  "osvVulnerabilityAlerts": true,
+  "suppressNotifications": ["prIgnoreNotification"],
+  "prConcurrentLimit": 3,
+  "prHourlyLimit": 2,
+  "branchConcurrentLimit": 5,
+  "semanticCommits": "enabled",
+  "semanticCommitType": "chore",
+  "semanticCommitScope": "deps",
+  "commitMessagePrefix": "chore(deps): ",
+  "ignoreDeps": ["node", "@types/node"],
+  "ignorePresets": [":prHourlyLimit2"]
+}
