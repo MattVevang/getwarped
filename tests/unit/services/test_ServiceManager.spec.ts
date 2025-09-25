@@ -10,7 +10,6 @@
 
 import {
   ServiceManager,
-  ServiceOperationResult,
   CreateServiceRequest,
   UpdateServiceRequest,
 } from '../../../src/main/services/ServiceManager';
@@ -19,7 +18,7 @@ import { ServiceConfiguration } from '../../../src/shared/types/ServiceConfigura
 // Mock electron-store
 jest.mock('electron-store');
 jest.mock('uuid', () => ({
-  v4: jest.fn(() => 'mocked-uuid-12345'),
+  v4: jest.fn(() => '123e4567-e89b-42d3-a456-426614174000'),
 }));
 
 describe('ServiceManager', () => {
@@ -27,11 +26,12 @@ describe('ServiceManager', () => {
   let mockStore: any;
 
   const mockServiceConfig: ServiceConfiguration = {
-    id: 'service-123',
+    id: '123e4567-e89b-42d3-a456-426614174000',
     name: 'Test Service',
     url: 'https://example.com',
-    workspaceId: 'workspace-456',
+    workspaceId: '456e7890-f012-4455-a678-901234567890',
     sortOrder: 1,
+    position: 0,
     icon: 'https://example.com/icon.png',
     iconType: 'url',
     theme: {
@@ -41,8 +41,8 @@ describe('ServiceManager', () => {
     },
     notifications: true,
     isActive: true,
-    createdAt: new Date('2025-01-01T00:00:00.000Z'),
-    updatedAt: new Date('2025-01-01T00:00:00.000Z'),
+    createdAt: '2025-01-01T00:00:00.000Z',
+    updatedAt: '2025-01-01T00:00:00.000Z',
     customUserAgent: 'CustomAgent/1.0',
     blockAds: true,
     blockTrackers: true,
@@ -72,7 +72,7 @@ describe('ServiceManager', () => {
 
   describe('createService', () => {
     const validCreateRequest: CreateServiceRequest = {
-      workspaceId: 'workspace-456',
+      workspaceId: '456e7890-f012-4455-a678-901234567890',
       name: 'New Service',
       url: 'https://newservice.com',
       icon: 'https://newservice.com/icon.png',
@@ -92,7 +92,7 @@ describe('ServiceManager', () => {
 
       expect(result.success).toBe(true);
       expect(result.data).toBeDefined();
-      expect(result.data?.id).toBe('mocked-uuid-12345');
+      expect(result.data?.id).toBe('123e4567-e89b-42d3-a456-426614174000');
       expect(result.data?.name).toBe(validCreateRequest.name);
       expect(result.data?.url).toBe(validCreateRequest.url);
       expect(mockStore.set).toHaveBeenCalled();
@@ -112,7 +112,7 @@ describe('ServiceManager', () => {
 
     it('should fail with missing required fields', async () => {
       const invalidRequest = {
-        workspaceId: 'workspace-456',
+        workspaceId: '456e7890-f012-4455-a678-901234567890',
         // Missing name and url
       } as CreateServiceRequest;
 
@@ -153,7 +153,7 @@ describe('ServiceManager', () => {
 
   describe('updateService', () => {
     const updateRequest: UpdateServiceRequest = {
-      serviceId: 'service-123',
+      serviceId: '123e4567-e89b-42d3-a456-426614174000',
       updates: {
         name: 'Updated Service',
         url: 'https://updated.com',
@@ -162,7 +162,7 @@ describe('ServiceManager', () => {
 
     it('should update service successfully', async () => {
       const existingServices = {
-        'service-123': mockServiceConfig,
+        '123e4567-e89b-42d3-a456-426614174000': mockServiceConfig,
       };
       mockStore.get.mockReturnValue(existingServices);
       mockStore.set.mockImplementation(() => {});
@@ -184,12 +184,12 @@ describe('ServiceManager', () => {
 
     it('should validate URL when updating', async () => {
       const existingServices = {
-        'service-123': mockServiceConfig,
+        '123e4567-e89b-42d3-a456-426614174000': mockServiceConfig,
       };
       mockStore.get.mockReturnValue(existingServices);
 
       const result = await serviceManager.updateService({
-        serviceId: 'service-123',
+        serviceId: '123e4567-e89b-42d3-a456-426614174000',
         updates: { url: 'invalid-url' },
       });
 
@@ -199,7 +199,7 @@ describe('ServiceManager', () => {
 
     it('should update timestamps correctly', async () => {
       const existingServices = {
-        'service-123': mockServiceConfig,
+        '123e4567-e89b-42d3-a456-426614174000': mockServiceConfig,
       };
       mockStore.get.mockReturnValue(existingServices);
       mockStore.set.mockImplementation(() => {});
@@ -219,13 +219,16 @@ describe('ServiceManager', () => {
   describe('deleteService', () => {
     it('should delete service successfully', async () => {
       const existingServices = {
-        'service-123': mockServiceConfig,
-        'service-456': { ...mockServiceConfig, id: 'service-456' },
+        '123e4567-e89b-42d3-a456-426614174000': mockServiceConfig,
+        '456e7890-f012-4455-a678-901234567890': {
+          ...mockServiceConfig,
+          id: '456e7890-f012-4455-a678-901234567890',
+        },
       };
       mockStore.get.mockReturnValue(existingServices);
       mockStore.set.mockImplementation(() => {});
 
-      const result = await serviceManager.deleteService('service-123');
+      const result = await serviceManager.deleteService('123e4567-e89b-42d3-a456-426614174000');
 
       expect(result.success).toBe(true);
       expect(mockStore.set).toHaveBeenCalled();
@@ -290,12 +293,15 @@ describe('ServiceManager', () => {
   describe('updateServiceOrder', () => {
     it('should update service order successfully', async () => {
       const existingServices = {
-        'service-123': mockServiceConfig,
+        '123e4567-e89b-42d3-a456-426614174000': mockServiceConfig,
       };
       mockStore.get.mockReturnValue(existingServices);
       mockStore.set.mockImplementation(() => {});
 
-      const result = await serviceManager.updateServiceOrder('service-123', 5);
+      const result = await serviceManager.updateServiceOrder(
+        '123e4567-e89b-42d3-a456-426614174000',
+        5
+      );
 
       expect(result.success).toBe(true);
       expect(mockStore.set).toHaveBeenCalled();
@@ -317,9 +323,7 @@ describe('ServiceManager', () => {
         throw new Error('Store read error');
       });
 
-      const result = serviceManager.getAllServices();
-
-      expect(() => result).toThrow('Store read error');
+      expect(() => serviceManager.getAllServices()).toThrow('Store read error');
     });
 
     it('should validate service configuration structure', async () => {

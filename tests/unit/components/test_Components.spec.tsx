@@ -468,10 +468,19 @@ describe('Component Integration Tests', () => {
       throw new Error('IPC test error');
     };
 
-    // eslint-disable-next-line no-console
+    // Suppress console.error for this test
     const originalConsoleError = console.error;
-    // eslint-disable-next-line no-console
-    console.error = jest.fn();
+    console.error = (...args: any[]) => {
+      if (
+        typeof args[0] === 'string' &&
+        (args[0].includes('React will try to recreate this component tree') ||
+          args[0].includes('Error: IPC test error') ||
+          args[0].includes('Consider adding an error boundary'))
+      ) {
+        return;
+      }
+      originalConsoleError.call(console, ...args);
+    };
 
     render(
       <ErrorBoundary>
@@ -479,7 +488,7 @@ describe('Component Integration Tests', () => {
       </ErrorBoundary>
     );
 
-    // eslint-disable-next-line no-console
+    // Restore console.error
     console.error = originalConsoleError;
 
     expect(screen.getByText(/Application Error/i)).toBeInTheDocument();

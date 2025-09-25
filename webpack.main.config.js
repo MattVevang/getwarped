@@ -58,6 +58,27 @@ module.exports = {
 
   optimization: {
     minimize: process.env.NODE_ENV === 'production',
+    minimizer: process.env.NODE_ENV === 'production' ? [
+      // TerserPlugin for main process optimization
+      new (require('terser-webpack-plugin'))({
+        terserOptions: {
+          ecma: 2020,
+          compress: {
+            drop_console: false, // Keep console for main process logging
+            drop_debugger: true,
+            pure_funcs: ['console.debug'],
+          },
+          mangle: {
+            keep_fnames: true, // Keep function names for stack traces
+          },
+          output: {
+            comments: false,
+          },
+        },
+        extractComments: false,
+      }),
+    ] : [],
+    nodeEnv: process.env.NODE_ENV,
   },
 
   stats: {

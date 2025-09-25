@@ -13,6 +13,11 @@ module.exports = {
     '**/?(*.)+(spec|test).ts',
     '**/?(*.)+(spec|test).tsx', // Added tsx support
   ],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/tests/e2e/',
+    '/playwright-report/'
+  ],
   transform: {
     '^.+\\.ts$': ['ts-jest', { 
       tsconfig: {

@@ -27,7 +27,26 @@ module.exports = {
     '!coverage',
     '!playwright-report',
     '!test-results',
+    // Exclude development files
+    '!**/*.map',
+    '!**/*.ts',
+    '!**/*.tsx',
+    '!**/README.md',
+    '!**/LICENSE',
+    '!**/.git*',
+    '!node_modules/**/*.d.ts',
+    '!node_modules/**/*.md',
+    '!node_modules/**/test/**',
+    '!node_modules/**/tests/**',
+    '!node_modules/**/*.test.js',
+    '!node_modules/**/*.spec.js',
   ],
+
+  // Node modules optimization
+  nodeModulesPolicy: 'prune',
+  
+  // Compression settings
+  compression: 'maximum',
 
   extraMetadata: {
     main: 'dist/main/main.js',

@@ -143,14 +143,17 @@ export class ServiceManager {
         iconType: 'builtin',
         ...(request.category && { category: request.category }),
         ...(request.description && { description: request.description }),
+        position: 0, // Default position
         theme: request.theme || {
           primaryColor: '#007bff',
           backgroundColor: '#ffffff',
           textColor: '#333333',
-          customCSS: '',
         },
+        notifications: true, // Default to enabled
         isActive: true,
         sortOrder: await this.getNextSortOrder(request.workspaceId),
+        blockAds: true, // Default to enabled
+        blockTrackers: true, // Default to enabled
         createdAt: now,
         updatedAt: now,
       };

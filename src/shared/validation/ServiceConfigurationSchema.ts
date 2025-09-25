@@ -97,11 +97,26 @@ const serviceConfigurationSchema = {
       pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
       description: 'Parent workspace UUID v4 identifier',
     },
+    category: {
+      type: ['string', 'null'],
+      maxLength: 50,
+      description: 'Optional service category',
+    },
+    description: {
+      type: ['string', 'null'],
+      maxLength: 500,
+      description: 'Optional service description',
+    },
     position: {
       type: 'integer',
       minimum: 0,
       maximum: 999,
       description: 'Display position (0-999, lower = higher priority)',
+    },
+    sortOrder: {
+      type: 'integer',
+      minimum: 0,
+      description: 'Sort order for services within workspace',
     },
     theme: {
       oneOf: [{ type: 'null' }, serviceThemeSchema],
@@ -110,6 +125,10 @@ const serviceConfigurationSchema = {
     notifications: {
       type: 'boolean',
       description: 'Enable/disable notifications for this service',
+    },
+    isActive: {
+      type: 'boolean',
+      description: 'Whether the service is currently active/enabled',
     },
     createdAt: {
       type: 'string',
@@ -143,7 +162,9 @@ const serviceConfigurationSchema = {
     'iconType',
     'workspaceId',
     'position',
+    'sortOrder',
     'notifications',
+    'isActive',
     'createdAt',
     'updatedAt',
     'blockAds',
@@ -282,21 +303,13 @@ function preprocessServiceConfiguration(data: unknown): unknown {
 
   const processed = { ...data } as any;
 
-  // Convert date strings to Date objects if needed
-  if (typeof processed.createdAt === 'string') {
-    try {
-      processed.createdAt = new Date(processed.createdAt);
-    } catch {
-      // Leave as string for validation to catch
-    }
+  // Convert Date objects to ISO strings for schema validation
+  if (processed.createdAt instanceof Date) {
+    processed.createdAt = processed.createdAt.toISOString();
   }
 
-  if (typeof processed.updatedAt === 'string') {
-    try {
-      processed.updatedAt = new Date(processed.updatedAt);
-    } catch {
-      // Leave as string for validation to catch
-    }
+  if (processed.updatedAt instanceof Date) {
+    processed.updatedAt = processed.updatedAt.toISOString();
   }
 
   return processed;
