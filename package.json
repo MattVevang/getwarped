@@ -118,6 +118,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.0",
+    "@sentry/electron": "^4.24.0",
     "@types/uuid": "^10.0.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^2.1.1",
